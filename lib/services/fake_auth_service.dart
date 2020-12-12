@@ -1,5 +1,5 @@
+import 'package:flutter_lovers/model/user_model.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
-import 'package:flutter_lovers/user/user_model.dart';
 
 class FakeAuthService implements AuthBase {
   String kullaniciID = "71547154";
@@ -18,5 +18,28 @@ class FakeAuthService implements AuthBase {
   @override
   Future<bool> signOut() {
     return Future.value(true);
+  }
+
+  @override
+  Future<Kullanici> signInWithGoogle() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Kullanici> signInWithFacebook() {
+    // TODO: implement signInWithFacebook
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Kullanici> createUserWithEmailAndPassword(String email, String sifre) {
+    // TODO: implement createUserWithEmailAndPassword
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Kullanici> signInWithEmailAndPassword(String email, String sifre) {
+    // TODO: implement signInWithEmailAndPassword
+    throw UnimplementedError();
   }
 }
