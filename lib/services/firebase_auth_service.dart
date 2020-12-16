@@ -24,6 +24,7 @@ class FirebaseAuthService implements AuthBase {
     } else {
       return Kullanici(
         kullaniciID: kullanici.uid,
+        email: kullanici.email,
       );
     }
   }

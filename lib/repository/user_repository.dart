@@ -3,12 +3,15 @@ import 'package:flutter_lovers/model/user_model.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
 import 'package:flutter_lovers/services/fake_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_auth_service.dart';
+import 'package:flutter_lovers/services/firestore_db_service.dart';
 
 enum AppMode { DEBUG, RELEASE }
 
 class UserRepository implements AuthBase {
   FirebaseAuthService _firebaseAuthService = locator<FirebaseAuthService>();
   FakeAuthService _fakeAuthService = locator<FakeAuthService>();
+  FirestoreDBService _fireStoreDBService = locator<FirestoreDBService>();
+
   AppMode appMode = AppMode.RELEASE;
   @override
   Future<Kullanici> currentUser() async {
@@ -42,7 +45,12 @@ class UserRepository implements AuthBase {
     if (appMode == AppMode.DEBUG) {
       return await _fakeAuthService.signInWithGoogle();
     } else {
-      return await _firebaseAuthService.signInWithGoogle();
+      Kullanici _kullanici = await _firebaseAuthService.signInWithGoogle();
+      bool _sonuc = await _fireStoreDBService.saveUser(_kullanici);
+      if (_sonuc) {
+        return _kullanici;
+      } else
+        return null;
     }
   }
 
@@ -51,7 +59,12 @@ class UserRepository implements AuthBase {
     if (appMode == AppMode.DEBUG) {
       return await _fakeAuthService.signInWithFacebook();
     } else {
-      return await _firebaseAuthService.signInWithFacebook();
+      Kullanici _kullanici = await _firebaseAuthService.signInWithFacebook();
+      bool _sonuc = await _fireStoreDBService.saveUser(_kullanici);
+      if (_sonuc) {
+        return _kullanici;
+      } else
+        return null;
     }
   }
 
@@ -62,8 +75,13 @@ class UserRepository implements AuthBase {
       return await _fakeAuthService.createUserWithEmailAndPassword(
           email, sifre);
     } else {
-      return await _firebaseAuthService.createUserWithEmailAndPassword(
-          email, sifre);
+      Kullanici _kullanici = await _firebaseAuthService
+          .createUserWithEmailAndPassword(email, sifre);
+      bool _sonuc = await _fireStoreDBService.saveUser(_kullanici);
+      if (_sonuc) {
+        return _kullanici;
+      } else
+        return null;
     }
   }
 

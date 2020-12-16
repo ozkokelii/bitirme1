@@ -10,6 +10,8 @@ class UserModel with ChangeNotifier implements AuthBase {
   ViewState _state = ViewState.Idle;
   UserRepository _userRepository = locator<UserRepository>();
   Kullanici _kullanici;
+  String emailHataMesaji;
+  String sifreHataMesaji;
 
   Kullanici get kullanici => _kullanici;
 
@@ -99,10 +101,13 @@ class UserModel with ChangeNotifier implements AuthBase {
   Future<Kullanici> createUserWithEmailAndPassword(
       String email, String sifre) async {
     try {
-      state = ViewState.Busy;
-      _kullanici =
-          await _userRepository.createUserWithEmailAndPassword(email, sifre);
-      return _kullanici;
+      if (_emailSifreKontrol(email, sifre)) {
+        state = ViewState.Busy;
+        _kullanici =
+            await _userRepository.createUserWithEmailAndPassword(email, sifre);
+        return _kullanici;
+      } else
+        return null;
     } catch (e) {
       debugPrint("viewmodeldeki current user hatası " + e.toString());
       return null;
@@ -115,15 +120,33 @@ class UserModel with ChangeNotifier implements AuthBase {
   Future<Kullanici> signInWithEmailAndPassword(
       String email, String sifre) async {
     try {
-      state = ViewState.Busy;
-      _kullanici =
-          await _userRepository.signInWithEmailAndPassword(email, sifre);
-      return _kullanici;
+      if (_emailSifreKontrol(email, sifre)) {
+        state = ViewState.Busy;
+        _kullanici =
+            await _userRepository.signInWithEmailAndPassword(email, sifre);
+        return _kullanici;
+      } else
+        return null;
     } catch (e) {
       debugPrint("viewmodeldeki current user hatası " + e.toString());
       return null;
     } finally {
       state = ViewState.Idle;
     }
+  }
+
+  bool _emailSifreKontrol(String email, String sifre) {
+    var sonuc = true;
+    if (sifre.length < 6) {
+      sifreHataMesaji = "En az 6 karakterli olmalı";
+      sonuc = false;
+    } else
+      sifreHataMesaji = null;
+    if (!email.contains("@")) {
+      emailHataMesaji = "Geçersiz email adresi";
+      sonuc = false;
+    } else
+      emailHataMesaji = null;
+    return sonuc;
   }
 }

@@ -20,7 +20,7 @@ class _EmailVeSifreLoginPageState extends State<EmailVeSifreLoginPage> {
   void _formSubmit() async {
     _formKey.currentState.save();
     debugPrint("email : " + _email + "sifre : " + _sifre);
-    final _userModel = Provider.of<UserModel>(context);
+    final _userModel = Provider.of<UserModel>(context, listen: false);
     if (_formType == FormType.Login) {
       Kullanici _girisYapanUser =
           await _userModel.signInWithEmailAndPassword(_email, _sifre);
@@ -49,62 +49,82 @@ class _EmailVeSifreLoginPageState extends State<EmailVeSifreLoginPage> {
     _linkText = _formType == FormType.Login
         ? "Hesabınız Yoksa Kayıt OLun "
         : "Hesabınız Varsa Giriş Yapın";
+
+    final _userModel = Provider.of<UserModel>(context, listen: false);
+
+    if (_userModel.kullanici != null) {
+      Future.delayed(Duration(milliseconds: 10), () {
+        Navigator.of(context).pop();
+      });
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: Text("Giris Kayıt"),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  TextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintText: "Email",
-                      labelText: "Email",
-                      prefixIcon: Icon(Icons.mail),
-                      border: OutlineInputBorder(),
+        body: _userModel.state == ViewState.Idle
+            ? SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: <Widget>[
+                        TextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            errorText: _userModel.emailHataMesaji != null
+                                ? _userModel.emailHataMesaji
+                                : null,
+                            hintText: "Email",
+                            labelText: "Email",
+                            prefixIcon: Icon(Icons.mail),
+                            border: OutlineInputBorder(),
+                          ),
+                          onSaved: (String girilenEmail) {
+                            _email = girilenEmail;
+                          },
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        TextFormField(
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            errorText: _userModel.sifreHataMesaji != null
+                                ? _userModel.sifreHataMesaji
+                                : null,
+                            hintText: "Password",
+                            labelText: "Password",
+                            prefixIcon: Icon(Icons.lock_outline),
+                            border: OutlineInputBorder(),
+                          ),
+                          onSaved: (String girilenSifre) {
+                            _sifre = girilenSifre;
+                          },
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        SocialLoginButton(
+                          butonText: _buttonText,
+                          butonColor: Theme.of(context).primaryColor,
+                          radius: 10,
+                          onPressed: () => _formSubmit(),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        FlatButton(
+                            onPressed: () => _degistir(),
+                            child: Text(_linkText))
+                      ],
                     ),
-                    onSaved: (String girilenEmail) {
-                      _email = girilenEmail;
-                    },
                   ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  TextFormField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      hintText: "Password",
-                      labelText: "Password",
-                      prefixIcon: Icon(Icons.lock_outline),
-                      border: OutlineInputBorder(),
-                    ),
-                    onSaved: (String girilenSifre) {
-                      _sifre = girilenSifre;
-                    },
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  SocialLoginButton(
-                    butonText: _buttonText,
-                    butonColor: Theme.of(context).primaryColor,
-                    radius: 10,
-                    onPressed: () => _formSubmit(),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  FlatButton(
-                      onPressed: () => _degistir(), child: Text(_linkText))
-                ],
-              ),
-            ),
-          ),
-        ));
+                ),
+              )
+            : Center(
+                child: CircularProgressIndicator(),
+              ));
   }
 }

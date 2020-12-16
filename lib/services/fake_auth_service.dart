@@ -6,13 +6,16 @@ class FakeAuthService implements AuthBase {
 
   @override
   Future<Kullanici> currentUser() async {
-    return await Future.value(Kullanici(kullaniciID: kullaniciID));
+    return await Future.value(
+        Kullanici(kullaniciID: kullaniciID, email: "fakekullanici@fake.com"));
   }
 
   @override
   Future<Kullanici> signInAnonymously() async {
     return await Future.delayed(
-        Duration(seconds: 2), () => Kullanici(kullaniciID: kullaniciID));
+        Duration(seconds: 2),
+        () => Kullanici(
+            kullaniciID: kullaniciID, email: "fakekullanici@fake.com"));
   }
 
   @override
@@ -21,25 +24,40 @@ class FakeAuthService implements AuthBase {
   }
 
   @override
-  Future<Kullanici> signInWithGoogle() {
-    throw UnimplementedError();
+  Future<Kullanici> signInWithGoogle() async {
+    return await Future.delayed(
+        Duration(seconds: 2),
+        () => Kullanici(
+            kullaniciID: "google_user_id_121212",
+            email: "fakekullanici@fake.com"));
   }
 
   @override
-  Future<Kullanici> signInWithFacebook() {
-    // TODO: implement signInWithFacebook
-    throw UnimplementedError();
+  Future<Kullanici> signInWithFacebook() async {
+    return await Future.delayed(
+        Duration(seconds: 2),
+        () => Kullanici(
+            kullaniciID: "facebook_user_id_12121212",
+            email: "fakekullanici@fake.com"));
   }
 
   @override
-  Future<Kullanici> createUserWithEmailAndPassword(String email, String sifre) {
-    // TODO: implement createUserWithEmailAndPassword
-    throw UnimplementedError();
+  Future<Kullanici> createUserWithEmailAndPassword(
+      String email, String sifre) async {
+    return await Future.delayed(
+        Duration(seconds: 2),
+        () => Kullanici(
+            kullaniciID: "created_user_id_131331",
+            email: "fakekullanici@fake.com"));
   }
 
   @override
-  Future<Kullanici> signInWithEmailAndPassword(String email, String sifre) {
-    // TODO: implement signInWithEmailAndPassword
-    throw UnimplementedError();
+  Future<Kullanici> signInWithEmailAndPassword(
+      String email, String sifre) async {
+    return await Future.delayed(
+        Duration(seconds: 2),
+        () => Kullanici(
+            kullaniciID: "signin_user_id_141414",
+            email: "fakekullanici@fake.com"));
   }
 }
