@@ -1,34 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lovers/app/bottom_nav.dart';
+import 'package:flutter_lovers/app/kullanicilar.dart';
+import 'package:flutter_lovers/app/profil.dart';
 import 'package:flutter_lovers/model/user_model.dart';
-import 'package:flutter_lovers/viewmodel/user_model.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_lovers/tab_items.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final Kullanici kullanici;
 
   HomePage({Key key, @required this.kullanici}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          FlatButton(
-              onPressed: () => _cikisYap(context),
-              child: Text(
-                "Çıkış Yap",
-                style: TextStyle(color: Colors.white),
-              ))
-        ],
-        title: Text("Ana Sayfa"),
-      ),
-      body: Center(child: Text("Hoşgeldiniz ${kullanici.kullaniciID}")),
-    );
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  TabItem _currentTab = TabItem.Kullanicilar;
+  Map<TabItem, GlobalKey<NavigatorState>> navigatorKeys = {
+    TabItem.Kullanicilar: GlobalKey<NavigatorState>(),
+    TabItem.Profil: GlobalKey<NavigatorState>(),
+  };
+  Map<TabItem, Widget> tumSayfalar() {
+    return {
+      TabItem.Kullanicilar: Kullanicilar(),
+      TabItem.Profil: Profil(),
+    };
   }
 
-  Future<bool> _cikisYap(BuildContext context) async {
-    final _userModel = Provider.of<UserModel>(context, listen: false);
-    bool sonuc = await _userModel.signOut();
-    return sonuc;
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async =>
+          !await navigatorKeys[_currentTab].currentState.maybePop(),
+      child: BottomNav(
+        sayfaOlusturucu: tumSayfalar(),
+        navigatorKeys: navigatorKeys,
+        currentTab: _currentTab,
+        onselectedTab: (secilenTab) {
+          if (secilenTab == _currentTab) {
+            navigatorKeys[secilenTab]
+                .currentState
+                .popUntil((route) => route.isFirst);
+          } else {
+            setState(() {
+              _currentTab = secilenTab;
+            });
+          }
+        },
+      ),
+    );
   }
 }
+/*
+Future<bool> _cikisYap(BuildContext context) async {
+  final _userModel = Provider.of<UserModel>(context, listen: false);
+  bool sonuc = await _userModel.signOut();
+  return sonuc;
+}
+ */
