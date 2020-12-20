@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/locator.dart';
-import 'package:flutter_lovers/model/user_model.dart';
+import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/repository/user_repository.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
 
@@ -100,20 +100,17 @@ class UserModel with ChangeNotifier implements AuthBase {
   @override
   Future<Kullanici> createUserWithEmailAndPassword(
       String email, String sifre) async {
-    try {
-      if (_emailSifreKontrol(email, sifre)) {
+    if (_emailSifreKontrol(email, sifre)) {
+      try {
         state = ViewState.Busy;
         _kullanici =
             await _userRepository.createUserWithEmailAndPassword(email, sifre);
         return _kullanici;
-      } else
-        return null;
-    } catch (e) {
-      debugPrint("viewmodeldeki current user hatası " + e.toString());
+      } finally {
+        state = ViewState.Idle;
+      }
+    } else
       return null;
-    } finally {
-      state = ViewState.Idle;
-    }
   }
 
   @override
@@ -127,9 +124,6 @@ class UserModel with ChangeNotifier implements AuthBase {
         return _kullanici;
       } else
         return null;
-    } catch (e) {
-      debugPrint("viewmodeldeki current user hatası " + e.toString());
-      return null;
     } finally {
       state = ViewState.Idle;
     }

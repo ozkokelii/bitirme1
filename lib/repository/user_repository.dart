@@ -1,5 +1,5 @@
 import 'package:flutter_lovers/locator.dart';
-import 'package:flutter_lovers/model/user_model.dart';
+import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
 import 'package:flutter_lovers/services/fake_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_auth_service.dart';
@@ -13,12 +13,14 @@ class UserRepository implements AuthBase {
   FirestoreDBService _fireStoreDBService = locator<FirestoreDBService>();
 
   AppMode appMode = AppMode.RELEASE;
+
   @override
   Future<Kullanici> currentUser() async {
     if (appMode == AppMode.DEBUG) {
       return await _fakeAuthService.currentUser();
     } else {
-      return await _firebaseAuthService.currentUser();
+      Kullanici _kullanici = await _firebaseAuthService.currentUser();
+      return await _fireStoreDBService.readUser(_kullanici.kullaniciID);
     }
   }
 
@@ -48,7 +50,7 @@ class UserRepository implements AuthBase {
       Kullanici _kullanici = await _firebaseAuthService.signInWithGoogle();
       bool _sonuc = await _fireStoreDBService.saveUser(_kullanici);
       if (_sonuc) {
-        return _kullanici;
+        return await _fireStoreDBService.readUser(_kullanici.kullaniciID);
       } else
         return null;
     }
@@ -62,7 +64,7 @@ class UserRepository implements AuthBase {
       Kullanici _kullanici = await _firebaseAuthService.signInWithFacebook();
       bool _sonuc = await _fireStoreDBService.saveUser(_kullanici);
       if (_sonuc) {
-        return _kullanici;
+        return await _fireStoreDBService.readUser(_kullanici.kullaniciID);
       } else
         return null;
     }
@@ -79,7 +81,7 @@ class UserRepository implements AuthBase {
           .createUserWithEmailAndPassword(email, sifre);
       bool _sonuc = await _fireStoreDBService.saveUser(_kullanici);
       if (_sonuc) {
-        return _kullanici;
+        return await _fireStoreDBService.readUser(_kullanici.kullaniciID);
       } else
         return null;
     }
@@ -91,8 +93,10 @@ class UserRepository implements AuthBase {
     if (appMode == AppMode.DEBUG) {
       return await _fakeAuthService.signInWithEmailAndPassword(email, sifre);
     } else {
-      return await _firebaseAuthService.signInWithEmailAndPassword(
-          email, sifre);
+      Kullanici _kullanici =
+          await _firebaseAuthService.signInWithEmailAndPassword(email, sifre);
+
+      return await _fireStoreDBService.readUser(_kullanici.kullaniciID);
     }
   }
 }

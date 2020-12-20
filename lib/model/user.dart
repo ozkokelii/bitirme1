@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -16,7 +18,8 @@ class Kullanici {
     return {
       "kullaniciID": kullaniciID,
       "email": email,
-      "userName": userName ?? " ",
+      "userName":
+          userName ?? email.substring(0, email.indexOf("@")) + randomSayiUret(),
       "profilURL": profilURL ??
           "https://www.flaticon.com/svg/static/icons/svg/81/81591.svg",
       "createdAt": createdAt ?? FieldValue.serverTimestamp(),
@@ -37,5 +40,10 @@ class Kullanici {
   @override
   String toString() {
     return 'Kullanici{kullaniciID: $kullaniciID, email: $email, userName: $userName, profilURL: $profilURL, createdAt: $createdAt, updatedAt: $updatedAt, seviye: $seviye}';
+  }
+
+  String randomSayiUret() {
+    int rastgeleSayi = Random().nextInt(999999);
+    return rastgeleSayi.toString();
   }
 }

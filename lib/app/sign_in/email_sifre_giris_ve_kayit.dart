@@ -1,6 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_lovers/app/hata_exception.dart';
+import 'package:flutter_lovers/common_widget/platform_duyarli_alert_dialog.dart';
 import 'package:flutter_lovers/common_widget/social_login_button.dart';
-import 'package:flutter_lovers/model/user_model.dart';
+import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -22,17 +26,33 @@ class _EmailVeSifreLoginPageState extends State<EmailVeSifreLoginPage> {
     debugPrint("email : " + _email + "sifre : " + _sifre);
     final _userModel = Provider.of<UserModel>(context, listen: false);
     if (_formType == FormType.Login) {
-      Kullanici _girisYapanUser =
-          await _userModel.signInWithEmailAndPassword(_email, _sifre);
-      if (_girisYapanUser != null)
-        print(
-            "oturum açma user id : " + _girisYapanUser.kullaniciID.toString());
+      try {
+        Kullanici _girisYapanUser =
+            await _userModel.signInWithEmailAndPassword(_email, _sifre);
+        if (_girisYapanUser != null)
+          print("oturum açma user id : " +
+              _girisYapanUser.kullaniciID.toString());
+      } on FirebaseAuthException catch (e) {
+        PlatformDuyarliAlertDialog(
+          baslik: "Oturum açma HATA",
+          icerik: Hatalar.goster(e.code),
+          anaButonYazisi: 'Tamam',
+        ).goster(context);
+      }
     } else {
-      Kullanici _olusturulanUser =
-          await _userModel.createUserWithEmailAndPassword(_email, _sifre);
-      if (_olusturulanUser != null)
-        print(
-            "oturum açma user id : " + _olusturulanUser.kullaniciID.toString());
+      try {
+        Kullanici _olusturulanUser =
+            await _userModel.createUserWithEmailAndPassword(_email, _sifre);
+        if (_olusturulanUser != null)
+          print("oturum açma user id : " +
+              _olusturulanUser.kullaniciID.toString());
+      } on FirebaseAuthException catch (e) {
+        PlatformDuyarliAlertDialog(
+          baslik: "Kullanıcı Oluşturma HATA",
+          icerik: Hatalar.goster(e.code),
+          anaButonYazisi: 'Tamam',
+        ).goster(context);
+      }
     }
   }
 

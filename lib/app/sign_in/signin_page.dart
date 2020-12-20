@@ -2,16 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/app/sign_in/email_sifre_giris_ve_kayit.dart';
 import 'package:flutter_lovers/common_widget/social_login_button.dart';
-import 'package:flutter_lovers/model/user_model.dart';
+import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
 class SigninPage extends StatelessWidget {
-  void _misafirGiris(BuildContext context) async {
+  /*void _misafirGiris(BuildContext context) async {
     final _userModel = Provider.of<UserModel>(context, listen: false);
     Kullanici _kullanici = await _userModel.signInAnonymously();
     print("oturum açma user id : " + _kullanici.kullaniciID.toString());
-  }
+  }*/
 
   void _facebookIleGiris(BuildContext context) async {
     final _userModel = Provider.of<UserModel>(context, listen: false);
@@ -80,12 +80,12 @@ class SigninPage extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            SocialLoginButton(
+            /*SocialLoginButton(
               butonText: "Misafir Olarak Giriş Yap",
               onPressed: () => _misafirGiris(context),
               butonIcon: Icon(Icons.supervised_user_circle),
               butonColor: Colors.teal,
-            ),
+            ),*/
           ],
         ),
       ),

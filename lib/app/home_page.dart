@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lovers/app/bottom_nav.dart';
 import 'package:flutter_lovers/app/kullanicilar.dart';
 import 'package:flutter_lovers/app/profil.dart';
-import 'package:flutter_lovers/model/user_model.dart';
+import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/tab_items.dart';
 
 class HomePage extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:flutter_lovers/model/user_model.dart';
+import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -112,26 +112,16 @@ class FirebaseAuthService implements AuthBase {
   @override
   Future<Kullanici> createUserWithEmailAndPassword(
       String email, String sifre) async {
-    try {
-      UserCredential sonuc = await _firebaseAuth.createUserWithEmailAndPassword(
-          email: email, password: sifre);
-      return _userFromFirebase(sonuc.user);
-    } catch (e) {
-      print("kayıt ol hata" + e.toString());
-      return null;
-    }
+    UserCredential sonuc = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email, password: sifre);
+    return _userFromFirebase(sonuc.user);
   }
 
   @override
   Future<Kullanici> signInWithEmailAndPassword(
       String email, String sifre) async {
-    try {
-      UserCredential sonuc = await _firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: sifre);
-      return _userFromFirebase(sonuc.user);
-    } catch (e) {
-      print("email giriş hata" + e.toString());
-      return null;
-    }
+    UserCredential sonuc = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: sifre);
+    return _userFromFirebase(sonuc.user);
   }
 }
