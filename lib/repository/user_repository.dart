@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:core';
+
 import 'package:flutter_lovers/locator.dart';
 import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
@@ -97,6 +100,15 @@ class UserRepository implements AuthBase {
           await _firebaseAuthService.signInWithEmailAndPassword(email, sifre);
 
       return await _fireStoreDBService.readUser(_kullanici.kullaniciID);
+    }
+  }
+
+  Future<bool> updateUserName(String kullaniciID, String yeniUserName) async {
+    if (appMode == AppMode.DEBUG) {
+      return false;
+    } else {
+      return await _fireStoreDBService.updateUserName(
+          kullaniciID, yeniUserName);
     }
   }
 }

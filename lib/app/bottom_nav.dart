@@ -43,6 +43,7 @@ class BottomNav extends StatelessWidget {
     // ignore: deprecated_member_use
     return BottomNavigationBarItem(
       icon: Icon(olusturulacakTab.icon),
+      // ignore: deprecated_member_use
       title: Text(olusturulacakTab.title),
     );
   }

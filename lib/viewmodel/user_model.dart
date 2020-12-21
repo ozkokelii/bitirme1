@@ -143,4 +143,12 @@ class UserModel with ChangeNotifier implements AuthBase {
       emailHataMesaji = null;
     return sonuc;
   }
+
+  Future<bool> updateUserName(String kullaniciID, String yeniUserName) async {
+    var sonuc = await _userRepository.updateUserName(kullaniciID, yeniUserName);
+    if (sonuc) {
+      _kullanici.userName = yeniUserName;
+    }
+    return sonuc;
+  }
 }

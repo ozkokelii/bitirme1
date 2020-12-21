@@ -12,7 +12,10 @@ class Kullanici {
   DateTime updatedAt;
   int seviye;
 
-  Kullanici({@required this.kullaniciID, @required this.email});
+  Kullanici(
+      {@required this.kullaniciID,
+      @required this.email,
+      @required this.userName});
 
   Map<String, dynamic> toMap() {
     return {
@@ -21,7 +24,7 @@ class Kullanici {
       "userName":
           userName ?? email.substring(0, email.indexOf("@")) + randomSayiUret(),
       "profilURL": profilURL ??
-          "https://www.flaticon.com/svg/static/icons/svg/81/81591.svg",
+          "https://emrealtunbilek.com/wp-content/uploads/2016/10/apple-icon-72x72.png",
       "createdAt": createdAt ?? FieldValue.serverTimestamp(),
       "updateAt": updatedAt ?? FieldValue.serverTimestamp(),
       "seviye": seviye ?? 1,
