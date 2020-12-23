@@ -39,6 +39,8 @@ dev_dependencies:
   flutter_facebook_login: ^3.0.0
   firebase_core : ^0.5.3
   cloud_firestore: ^0.14.4
+  image_picker: ^0.6.7+17
+  firebase_storage: ^5.2.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

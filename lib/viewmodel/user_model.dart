@@ -151,4 +151,11 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
     return sonuc;
   }
+
+  Future<String> uploadFile(
+      String kullaniciID, String fileType, profilFoto) async {
+    var indirmeLinki =
+        await _userRepository.uploadFile(kullaniciID, fileType, profilFoto);
+    return indirmeLinki;
+  }
 }

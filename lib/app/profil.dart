@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lovers/common_widget/platform_duyarli_alert_dialog.dart';
 import 'package:flutter_lovers/common_widget/social_login_button.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class Profil extends StatefulWidget {
@@ -11,6 +12,7 @@ class Profil extends StatefulWidget {
 
 class _ProfilState extends State<Profil> {
   TextEditingController _controllerUserName;
+  var _profilFoto;
 
   @override
   void initState() {
@@ -22,6 +24,25 @@ class _ProfilState extends State<Profil> {
   void dispose() {
     _controllerUserName.dispose();
     super.dispose();
+  }
+
+  void _kameradanFotoCek() async {
+    // ignore: deprecated_member_use
+    var _yeniResim = await ImagePicker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      _profilFoto = _yeniResim;
+      Navigator.of(context).pop();
+    });
+  }
+
+  void _galeridenSec() async {
+    // ignore: deprecated_member_use
+    var _yeniResim = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _profilFoto = _yeniResim;
+      Navigator.of(context).pop();
+    });
   }
 
   @override
@@ -48,10 +69,41 @@ class _ProfilState extends State<Profil> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: CircleAvatar(
-                  radius: 75,
-                  backgroundColor: Colors.red,
-                  backgroundImage: NetworkImage(_userModel.kullanici.profilURL),
+                child: GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return Container(
+                            height: 160,
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  leading: Icon(Icons.camera),
+                                  title: Text("Kameradan Çek"),
+                                  onTap: () {
+                                    _kameradanFotoCek();
+                                  },
+                                ),
+                                ListTile(
+                                  leading: Icon(Icons.image),
+                                  title: Text("Galeriden Seç"),
+                                  onTap: () {
+                                    _galeridenSec();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+                  },
+                  child: CircleAvatar(
+                    radius: 75,
+                    backgroundColor: Colors.red,
+                    backgroundImage: _profilFoto == null
+                        ? NetworkImage(_userModel.kullanici.profilURL)
+                        : FileImage(_profilFoto),
+                  ),
                 ),
               ),
               Padding(
@@ -70,7 +122,6 @@ class _ProfilState extends State<Profil> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   controller: _controllerUserName,
-                  readOnly: true,
                   decoration: InputDecoration(
                     labelText: "Kullanıcı Adınız",
                     hintText: "Kullanıcı Adı",
@@ -84,6 +135,7 @@ class _ProfilState extends State<Profil> {
                   butonText: "Değişiklikleri Kaydet",
                   onPressed: () {
                     _userNameGuncelle(context);
+                    _profilFotoGuncelle(context);
                   },
                 ),
               ),
@@ -135,12 +187,15 @@ class _ProfilState extends State<Profil> {
           anaButonYazisi: "Tamam",
         ).goster(context);
       }
-    } else {
-      PlatformDuyarliAlertDialog(
-        baslik: "Hata",
-        icerik: "Kullanıcı Adı Değişikliği Yapmadınız",
-        anaButonYazisi: "Tamam",
-      ).goster(context);
+    }
+  }
+
+  void _profilFotoGuncelle(BuildContext context) async {
+    final _userModel = Provider.of<UserModel>(context, listen: false);
+    if (_profilFoto != null) {
+      var url = await _userModel.uploadFile(
+          _userModel.kullanici.kullaniciID, "pofil_foto", _profilFoto);
+      print("gelen url " + url);
     }
   }
 }

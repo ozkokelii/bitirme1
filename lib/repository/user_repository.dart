@@ -6,6 +6,7 @@ import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
 import 'package:flutter_lovers/services/fake_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_auth_service.dart';
+import 'package:flutter_lovers/services/firebase_storage_service.dart';
 import 'package:flutter_lovers/services/firestore_db_service.dart';
 
 enum AppMode { DEBUG, RELEASE }
@@ -14,6 +15,8 @@ class UserRepository implements AuthBase {
   FirebaseAuthService _firebaseAuthService = locator<FirebaseAuthService>();
   FakeAuthService _fakeAuthService = locator<FakeAuthService>();
   FirestoreDBService _fireStoreDBService = locator<FirestoreDBService>();
+  FirebaseStorageService _firebaseStorageService =
+      locator<FirebaseStorageService>();
 
   AppMode appMode = AppMode.RELEASE;
 
@@ -109,6 +112,18 @@ class UserRepository implements AuthBase {
     } else {
       return await _fireStoreDBService.updateUserName(
           kullaniciID, yeniUserName);
+    }
+  }
+
+  Future<String> uploadFile(
+      String kullaniciID, String fileType, profilFoto) async {
+    if (appMode == AppMode.DEBUG) {
+      return "dosya indirme linki";
+    } else {
+      var porfilFotoURL = await _firebaseStorageService.uploadFile(
+          kullaniciID, fileType, profilFoto);
+      await _fireStoreDBService.updateProfilFoto(kullaniciID, porfilFotoURL);
+      return porfilFotoURL;
     }
   }
 }
