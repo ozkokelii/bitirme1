@@ -155,8 +155,8 @@ class _ProfilState extends State<Profil> {
 
   Future _cikisIcinOnayIste(BuildContext context) async {
     final sonuc = await PlatformDuyarliAlertDialog(
-      baslik: "Emin misiniz ?",
-      icerik: "Çıkamk istediğinize emin misiniz ?",
+      baslik: "Emin Misiniz?",
+      icerik: "Çıkmak istediğinizden emin misiniz?",
       anaButonYazisi: "Evet",
       iptalButonYazisi: "Vazgeç",
     ).goster(context);
@@ -196,6 +196,14 @@ class _ProfilState extends State<Profil> {
       var url = await _userModel.uploadFile(
           _userModel.kullanici.kullaniciID, "pofil_foto", _profilFoto);
       print("gelen url " + url);
+
+      if (url != null) {
+        PlatformDuyarliAlertDialog(
+          baslik: "Başarılı",
+          icerik: "Profil Fotosu Güncellendi",
+          anaButonYazisi: "Tamam",
+        ).goster(context);
+      }
     }
   }
 }

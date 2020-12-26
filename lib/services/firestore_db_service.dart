@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_lovers/model/mesaj.dart';
 import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/services/database_base.dart';
 
@@ -59,6 +60,71 @@ class FirestoreDBService implements DBBase {
         .collection("users")
         .doc(kullaniciID)
         .update({"profilURL": profilFotoURL});
+    return true;
+  }
+
+  @override
+  Future<List> getAllUsers() async {
+    QuerySnapshot querySnapshot = await _firebaseDB.collection("users").get();
+
+    List<Kullanici> tumKullanicilar = [];
+    for (DocumentSnapshot tekUser in querySnapshot.docs) {
+      Kullanici _tekUser = Kullanici.fromMap(tekUser.data());
+      tumKullanicilar.add(_tekUser);
+    }
+    return tumKullanicilar;
+  }
+/*
+  @override
+  Stream<Mesaj> getMessages(String currentUserID, String sohbetEdilenUserID) {
+    var snapShot = _firebaseDB
+        .collection("konusmalar")
+        .doc(currentUserID + "--" + sohbetEdilenUserID)
+        .collection("mesajlar")
+        .doc(currentUserID)
+        .snapshots();
+    return snapShot.map((snapShot) => Mesaj.fromMap(snapShot.data));
+  }
+*/
+
+  @override
+  Stream<List<Mesaj>> getMessages(
+      String currentUserID, String sohbetEdilenUserID) {
+    var snapShot = _firebaseDB
+        .collection("konusmalar")
+        .doc(currentUserID + "--" + sohbetEdilenUserID)
+        .collection("mesajlar")
+        .orderBy("date", descending: true)
+        .snapshots();
+    return snapShot.map((mesajListesi) =>
+        mesajListesi.docs.map((mesaj) => Mesaj.fromMap(mesaj.data())).toList());
+  }
+
+  Future<bool> saveMessage(Mesaj kaydedilecekMesaj) async {
+    var _mesajID = _firebaseDB.collection("konuşmalar").doc().id;
+    var _myDocumentID =
+        kaydedilecekMesaj.kimden + "--" + kaydedilecekMesaj.kime;
+    var _receiverDocumentID =
+        kaydedilecekMesaj.kime + "--" + kaydedilecekMesaj.kimden;
+
+    var _kaydedilecekMesajMapYapisi = kaydedilecekMesaj.toMap();
+
+    await _firebaseDB
+        .collection("konuşmalar")
+        .doc(_myDocumentID)
+        .collection("mesajlar")
+        .doc(_mesajID)
+        .set(_kaydedilecekMesajMapYapisi);
+
+    _kaydedilecekMesajMapYapisi.update("bendenMi", (deger) => false);
+
+    await _firebaseDB
+        .collection("konuşmalar")
+        .doc(_receiverDocumentID)
+        .collection("mesajlar")
+        .doc(_mesajID)
+        .set(_kaydedilecekMesajMapYapisi);
+
     return true;
   }
 }

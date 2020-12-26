@@ -8,6 +8,7 @@ import 'package:flutter_lovers/services/fake_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_auth_service.dart';
 import 'package:flutter_lovers/services/firebase_storage_service.dart';
 import 'package:flutter_lovers/services/firestore_db_service.dart';
+import 'package:flutter_lovers/model/mesaj.dart';
 
 enum AppMode { DEBUG, RELEASE }
 
@@ -125,5 +126,31 @@ class UserRepository implements AuthBase {
       await _fireStoreDBService.updateProfilFoto(kullaniciID, porfilFotoURL);
       return porfilFotoURL;
     }
+  }
+
+  Future<List<Kullanici>> getAllUser() async {
+    if (appMode == AppMode.DEBUG) {
+      return [];
+    } else {
+      var tumKullaniciListesi = await _fireStoreDBService.getAllUsers();
+      return tumKullaniciListesi;
+    }
+  }
+
+  Stream<List<Mesaj>> getMessages(String currentUserID, String sohbetEdilenUserID) {
+    if (appMode == AppMode.DEBUG) {
+      return Stream.empty();
+    } else {
+      return _fireStoreDBService.getMessages(currentUserID, sohbetEdilenUserID);
+    }
+  }
+
+  Future<bool> saveMessage(Mesaj kaydedilecekMesaj) async{
+    if (appMode == AppMode.DEBUG) {
+      return true;
+    } else {
+      return _fireStoreDBService.saveMessage(kaydedilecekMesaj);
+    }
+
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/locator.dart';
+import 'package:flutter_lovers/model/mesaj.dart';
 import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/repository/user_repository.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
@@ -38,6 +39,11 @@ class UserModel with ChangeNotifier implements AuthBase {
     } finally {
       state = ViewState.Idle;
     }
+  }
+
+  Future<List<Kullanici>> getAllUser() async {
+    var tumKullaniciListesi = await _userRepository.getAllUser();
+    return tumKullaniciListesi;
   }
 
   @override
@@ -157,5 +163,14 @@ class UserModel with ChangeNotifier implements AuthBase {
     var indirmeLinki =
         await _userRepository.uploadFile(kullaniciID, fileType, profilFoto);
     return indirmeLinki;
+  }
+
+  Stream<List<Mesaj>> getMessages(
+      String currentUserID, String sohbetEdilenUserID) {
+    return _userRepository.getMessages(currentUserID, sohbetEdilenUserID);
+  }
+
+  Future<bool> saveMessage(Mesaj kaydedilecekMesaj) {
+    return _userRepository.saveMessage(kaydedilecekMesaj);
   }
 }
