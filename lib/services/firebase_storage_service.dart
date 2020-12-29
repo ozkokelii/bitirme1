@@ -1,24 +1,28 @@
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter_lovers/services/storage_base.dart';
 
 class FirebaseStorageService implements StorageBase {
-  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-  var _storageReference;
+  firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
+  firebase_storage.Reference _storageReference;
 
   @override
   Future<String> uploadFile(
-      String userID, String fileType, File document) async {
-    _storageReference = _firebaseStorage
+      String userID, String fileType, File yuklenecekDosya) async {
+    _storageReference = firebase_storage.FirebaseStorage.instance
         .ref()
         .child(userID)
         .child(fileType)
-        .child("profil_photo.png");
-    UploadTask uploadTask = _storageReference.putFile(document);
+        .child("profil_foto.png");
 
-    var url = await uploadTask.then((a) => a.ref.getDownloadURL());
+    firebase_storage.UploadTask uploadTask =
+        _storageReference.putFile(yuklenecekDosya);
 
+    firebase_storage.TaskSnapshot snapshot = await uploadTask;
+
+    var url = await _storageReference.getDownloadURL();
     return url;
   }
 }

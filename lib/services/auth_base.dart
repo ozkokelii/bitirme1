@@ -1,11 +1,11 @@
 import 'package:flutter_lovers/model/user.dart';
 
 abstract class AuthBase {
-  Future<Kullanici> currentUser();
-  Future<Kullanici> signInAnonymously();
+  Future<MyUser> getCurrentUser();
+  Future<MyUser> singInAnonymously();
   Future<bool> signOut();
-  Future<Kullanici> signInWithGoogle();
-  Future<Kullanici> signInWithFacebook();
-  Future<Kullanici> signInWithEmailAndPassword(String email, String sifre);
-  Future<Kullanici> createUserWithEmailAndPassword(String email, String sifre);
+  Future<MyUser> signInWithGoogle();
+  Future<MyUser> signInWithFacebook();
+  Future<MyUser> signInWithEmailandPassword(String email, String sifre);
+  Future<MyUser> createUserWithEmailandPassword(String email, String sifre);
 }

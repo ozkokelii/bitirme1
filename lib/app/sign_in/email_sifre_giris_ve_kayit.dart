@@ -8,45 +8,48 @@ import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
-enum FormType { Register, Login }
+enum FormType { Register, LogIn }
 
-class EmailVeSifreLoginPage extends StatefulWidget {
+class EmailveSifreLoginPage extends StatefulWidget {
   @override
-  _EmailVeSifreLoginPageState createState() => _EmailVeSifreLoginPageState();
+  _EmailveSifreLoginPageState createState() => _EmailveSifreLoginPageState();
 }
 
-class _EmailVeSifreLoginPageState extends State<EmailVeSifreLoginPage> {
+class _EmailveSifreLoginPageState extends State<EmailveSifreLoginPage> {
   String _email, _sifre;
-  String _buttonText, _linkText;
-  var _formType = FormType.Login;
+  String _butonText, _linkText;
+  var _formType = FormType.LogIn;
+
   final _formKey = GlobalKey<FormState>();
 
   void _formSubmit() async {
     _formKey.currentState.save();
-    debugPrint("email : " + _email + "sifre : " + _sifre);
+    debugPrint("email :" + _email + " şifre:" + _sifre);
+
     final _userModel = Provider.of<UserModel>(context, listen: false);
-    if (_formType == FormType.Login) {
+
+    if (_formType == FormType.LogIn) {
       try {
-        Kullanici _girisYapanUser =
-            await _userModel.signInWithEmailAndPassword(_email, _sifre);
-        if (_girisYapanUser != null)
-          print("oturum açma user id : " +
-              _girisYapanUser.kullaniciID.toString());
+        MyUser _girisYapanUser =
+            await _userModel.signInWithEmailandPassword(_email, _sifre);
+        //if (_girisYapanUser != null)
+        //print("Oturum açan user id:" + _girisYapanUser.userID.toString());
       } on FirebaseAuthException catch (e) {
+        print("hata ${e.code}");
         PlatformDuyarliAlertDialog(
-          baslik: "Oturum açma HATA",
+          baslik: "Oturum Açma HATA",
           icerik: Hatalar.goster(e.code),
           anaButonYazisi: 'Tamam',
         ).goster(context);
       }
     } else {
       try {
-        Kullanici _olusturulanUser =
-            await _userModel.createUserWithEmailAndPassword(_email, _sifre);
-        if (_olusturulanUser != null)
-          print("oturum açma user id : " +
-              _olusturulanUser.kullaniciID.toString());
+        MyUser _olusturulanUser =
+            await _userModel.createUserWithEmailandPassword(_email, _sifre);
+        /* if (_olusturulanUser != null)
+          print("Oturum açan user id:" + _olusturulanUser.userID.toString());*/
       } on FirebaseAuthException catch (e) {
+        print("hata ${e.code}");
         PlatformDuyarliAlertDialog(
           baslik: "Kullanıcı Oluşturma HATA",
           icerik: Hatalar.goster(e.code),
@@ -59,46 +62,46 @@ class _EmailVeSifreLoginPageState extends State<EmailVeSifreLoginPage> {
   void _degistir() {
     setState(() {
       _formType =
-          _formType == FormType.Login ? FormType.Register : FormType.Login;
+          _formType == FormType.LogIn ? FormType.Register : FormType.LogIn;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    _buttonText = _formType == FormType.Login ? "Giriş Yap" : "Kayıt Ol";
-    _linkText = _formType == FormType.Login
-        ? "Hesabınız Yoksa Kayıt OLun "
-        : "Hesabınız Varsa Giriş Yapın";
+    _butonText = _formType == FormType.LogIn ? "Giriş Yap " : "Kayıt Ol";
+    _linkText = _formType == FormType.LogIn
+        ? "Hesabınız Yok Mu? Kayıt Olun"
+        : "Hesabınız Var Mı? Giriş Yapın";
+    final _userModel = Provider.of<UserModel>(context);
 
-    final _userModel = Provider.of<UserModel>(context, listen: false);
-
-    if (_userModel.kullanici != null) {
-      Future.delayed(Duration(milliseconds: 10), () {
-        Navigator.of(context).pop();
+    if (_userModel.user != null) {
+      Future.delayed(Duration(milliseconds: 1), () {
+        Navigator.of(context).popUntil(ModalRoute.withName("/"));
       });
     }
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Giris Kayıt"),
-        ),
-        body: _userModel.state == ViewState.Idle
-            ? SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Form(
+      appBar: AppBar(
+        title: Text("Giriş / Kayıt"),
+      ),
+      body: _userModel.state == ViewState.Idle
+          ? SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
                     key: _formKey,
                     child: Column(
                       children: <Widget>[
                         TextFormField(
+                          //initialValue: "emre@emre.com",
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             errorText: _userModel.emailHataMesaji != null
                                 ? _userModel.emailHataMesaji
                                 : null,
-                            hintText: "Email",
-                            labelText: "Email",
                             prefixIcon: Icon(Icons.mail),
+                            hintText: 'Email',
+                            labelText: 'Email',
                             border: OutlineInputBorder(),
                           ),
                           onSaved: (String girilenEmail) {
@@ -109,14 +112,15 @@ class _EmailVeSifreLoginPageState extends State<EmailVeSifreLoginPage> {
                           height: 8,
                         ),
                         TextFormField(
+                          //initialValue: "password",
                           obscureText: true,
                           decoration: InputDecoration(
                             errorText: _userModel.sifreHataMesaji != null
                                 ? _userModel.sifreHataMesaji
                                 : null,
-                            hintText: "Password",
-                            labelText: "Password",
-                            prefixIcon: Icon(Icons.lock_outline),
+                            prefixIcon: Icon(Icons.lock),
+                            hintText: 'Sifre',
+                            labelText: 'Sifre',
                             border: OutlineInputBorder(),
                           ),
                           onSaved: (String girilenSifre) {
@@ -127,24 +131,25 @@ class _EmailVeSifreLoginPageState extends State<EmailVeSifreLoginPage> {
                           height: 8,
                         ),
                         SocialLoginButton(
-                          butonText: _buttonText,
+                          butonText: _butonText,
                           butonColor: Theme.of(context).primaryColor,
                           radius: 10,
                           onPressed: () => _formSubmit(),
                         ),
                         SizedBox(
-                          height: 8,
+                          height: 10,
                         ),
                         FlatButton(
-                            onPressed: () => _degistir(),
-                            child: Text(_linkText))
+                          onPressed: () => _degistir(),
+                          child: Text(_linkText),
+                        ),
                       ],
-                    ),
-                  ),
-                ),
-              )
-            : Center(
-                child: CircularProgressIndicator(),
-              ));
+                    )),
+              ),
+            )
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
+    );
   }
 }

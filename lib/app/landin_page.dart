@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lovers/app/home_page.dart';
+import 'package:flutter_lovers/app/sign_in/signin_page.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
-
-import 'file:///C:/flutter_projects/flutter_lovers/lib/app/home_page.dart';
-import 'file:///C:/flutter_projects/flutter_lovers/lib/app/sign_in/signin_page.dart';
 
 class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final _userModel = Provider.of<UserModel>(context, listen: false);
+    final _userModel = Provider.of<UserModel>(context,
+        listen:
+            true); // "listen" default olarak "true " kabul edildigi icin bunu yazmaya da bilisiniz
     if (_userModel.state == ViewState.Idle) {
-      if (_userModel.kullanici == null) {
-        return SigninPage();
+      if (_userModel.user == null) {
+        return SignInPage();
       } else {
-        return HomePage(kullanici: _userModel.kullanici);
+        return HomePage(user: _userModel.user);
       }
     } else {
       return Scaffold(

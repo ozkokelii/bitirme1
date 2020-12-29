@@ -1,25 +1,34 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+//import 'package:flutter_lovers/admob_islemleri.dart';
 import 'package:flutter_lovers/common_widget/platform_duyarli_alert_dialog.dart';
 import 'package:flutter_lovers/common_widget/social_login_button.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class Profil extends StatefulWidget {
+class ProfilPage extends StatefulWidget {
   @override
-  _ProfilState createState() => _ProfilState();
+  _ProfilPageState createState() => _ProfilPageState();
 }
 
-class _ProfilState extends State<Profil> {
+class _ProfilPageState extends State<ProfilPage> {
   TextEditingController _controllerUserName;
-  var _profilFoto;
-
+  File _profilFoto;
+/*
   @override
   void initState() {
     super.initState();
     _controllerUserName = TextEditingController();
+    AdmobIslemleri.myBannerAd = AdmobIslemleri.buildBannerAd();
+    AdmobIslemleri.myBannerAd
+      ..load()
+      ..show(anchorOffset: 180);
+    print(
+        " #################### banner kullanıcı sayfasında gosterilecek ######################");
   }
-
+*/
   @override
   void dispose() {
     _controllerUserName.dispose();
@@ -36,9 +45,10 @@ class _ProfilState extends State<Profil> {
     });
   }
 
-  void _galeridenSec() async {
+  void _galeridenResimSec() async {
     // ignore: deprecated_member_use
     var _yeniResim = await ImagePicker.pickImage(source: ImageSource.gallery);
+
     setState(() {
       _profilFoto = _yeniResim;
       Navigator.of(context).pop();
@@ -48,25 +58,25 @@ class _ProfilState extends State<Profil> {
   @override
   Widget build(BuildContext context) {
     UserModel _userModel = Provider.of<UserModel>(context);
-    _controllerUserName.text = _userModel.kullanici.userName;
-    print(
-        "Profil sayfasındaki user değerleri" + _userModel.kullanici.toString());
+    _controllerUserName.text = _userModel.user.userName;
+    //print("Profil sayfasındaki user degerleri :" + _userModel.user.toString());
     return Scaffold(
       appBar: AppBar(
         title: Text("Profil"),
-        actions: [
+        actions: <Widget>[
           FlatButton(
-              onPressed: () => _cikisIcinOnayIste(context),
-              child: Text(
-                "Çıkış",
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ))
+            onPressed: () => _cikisIcinOnayIste(context),
+            child: Text(
+              "Çıkış",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          )
         ],
       ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
-            children: [
+            children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: GestureDetector(
@@ -77,7 +87,7 @@ class _ProfilState extends State<Profil> {
                           return Container(
                             height: 160,
                             child: Column(
-                              children: [
+                              children: <Widget>[
                                 ListTile(
                                   leading: Icon(Icons.camera),
                                   title: Text("Kameradan Çek"),
@@ -89,7 +99,7 @@ class _ProfilState extends State<Profil> {
                                   leading: Icon(Icons.image),
                                   title: Text("Galeriden Seç"),
                                   onTap: () {
-                                    _galeridenSec();
+                                    _galeridenResimSec();
                                   },
                                 ),
                               ],
@@ -99,9 +109,9 @@ class _ProfilState extends State<Profil> {
                   },
                   child: CircleAvatar(
                     radius: 75,
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.white,
                     backgroundImage: _profilFoto == null
-                        ? NetworkImage(_userModel.kullanici.profilURL)
+                        ? NetworkImage(_userModel.user.profilURL)
                         : FileImage(_profilFoto),
                   ),
                 ),
@@ -109,11 +119,11 @@ class _ProfilState extends State<Profil> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
-                  initialValue: _userModel.kullanici.email,
+                  initialValue: _userModel.user.email,
                   readOnly: true,
                   decoration: InputDecoration(
                     labelText: "Emailiniz",
-                    hintText: "Email",
+                    hintText: 'Email',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -123,8 +133,8 @@ class _ProfilState extends State<Profil> {
                 child: TextFormField(
                   controller: _controllerUserName,
                   decoration: InputDecoration(
-                    labelText: "Kullanıcı Adınız",
-                    hintText: "Kullanıcı Adı",
+                    labelText: "User Name",
+                    hintText: 'Username',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -149,7 +159,6 @@ class _ProfilState extends State<Profil> {
   Future<bool> _cikisYap(BuildContext context) async {
     final _userModel = Provider.of<UserModel>(context, listen: false);
     bool sonuc = await _userModel.signOut();
-    Navigator.of(context).pop();
     return sonuc;
   }
 
@@ -168,23 +177,22 @@ class _ProfilState extends State<Profil> {
 
   void _userNameGuncelle(BuildContext context) async {
     final _userModel = Provider.of<UserModel>(context, listen: false);
-    if (_userModel.kullanici.userName != _controllerUserName.text) {
+    if (_userModel.user.userName != _controllerUserName.text) {
       var updateResult = await _userModel.updateUserName(
-          _userModel.kullanici.kullaniciID, _controllerUserName.text);
+          _userModel.user.userID, _controllerUserName.text);
 
       if (updateResult == true) {
-        _userModel.kullanici.userName = _controllerUserName.text;
         PlatformDuyarliAlertDialog(
           baslik: "Başarılı",
-          icerik: "Kullanıcı Adı Değiştirildi",
-          anaButonYazisi: "Tamam",
+          icerik: "Username değiştirildi",
+          anaButonYazisi: 'Tamam',
         ).goster(context);
       } else {
-        _controllerUserName.text = _userModel.kullanici.userName;
+        _controllerUserName.text = _userModel.user.userName;
         PlatformDuyarliAlertDialog(
           baslik: "Hata",
-          icerik: "Kullanıcı Zaten Kullanımda",
-          anaButonYazisi: "Tamam",
+          icerik: "Username zaten kullanımda, farklı bir username deneyiniz",
+          anaButonYazisi: 'Tamam',
         ).goster(context);
       }
     }
@@ -194,14 +202,14 @@ class _ProfilState extends State<Profil> {
     final _userModel = Provider.of<UserModel>(context, listen: false);
     if (_profilFoto != null) {
       var url = await _userModel.uploadFile(
-          _userModel.kullanici.kullaniciID, "pofil_foto", _profilFoto);
-      print("gelen url " + url);
+          _userModel.user.userID, "profil_foto", _profilFoto);
+      //print("gelen url :" + url);
 
       if (url != null) {
         PlatformDuyarliAlertDialog(
           baslik: "Başarılı",
-          icerik: "Profil Fotosu Güncellendi",
-          anaButonYazisi: "Tamam",
+          icerik: "Profil fotoğrafınız güncellendi",
+          anaButonYazisi: 'Tamam',
         ).goster(context);
       }
     }

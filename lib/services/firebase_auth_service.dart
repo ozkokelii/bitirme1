@@ -8,55 +8,54 @@ class FirebaseAuthService implements AuthBase {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   @override
-  Future<Kullanici> currentUser() async {
+  Future<MyUser> getCurrentUser() async {
     try {
-      User kullanici = _firebaseAuth.currentUser;
-      return _userFromFirebase(kullanici);
+      User user = _firebaseAuth.currentUser;
+      return _userFromFirebase(user);
     } catch (e) {
-      print("HATA CURRENT USER " + e.toString());
+      print("HATA CURRENT USER" + e.toString());
       return null;
     }
   }
 
-  Kullanici _userFromFirebase(User kullanici) {
-    if (kullanici == null) {
+  MyUser _userFromFirebase(User user) {
+    if (user == null) {
       return null;
     } else {
-      return Kullanici(
-        kullaniciID: kullanici.uid,
-        email: kullanici.email,
-      );
-    }
-  }
-
-  @override
-  Future<Kullanici> signInAnonymously() async {
-    try {
-      UserCredential sonuc = await _firebaseAuth.signInAnonymously();
-      return _userFromFirebase(sonuc.user);
-    } catch (e) {
-      print("ananonim giriş hata" + e.toString());
-      return null;
+      return MyUser(userID: user.uid, email: user.email);
     }
   }
 
   @override
   Future<bool> signOut() async {
     try {
-      final _googleSignIn = GoogleSignIn();
-      await _googleSignIn.signOut();
       final _facebookLogin = FacebookLogin();
       await _facebookLogin.logOut();
+
+      final _googleSignIn = GoogleSignIn();
+      await _googleSignIn.signOut();
+
       await _firebaseAuth.signOut();
       return true;
     } catch (e) {
-      print("signout hata" + e.toString());
+      print("sign out hata:" + e.toString());
       return false;
     }
   }
 
   @override
-  Future<Kullanici> signInWithGoogle() async {
+  Future<MyUser> singInAnonymously() async {
+    try {
+      UserCredential sonuc = await _firebaseAuth.signInAnonymously();
+      return _userFromFirebase(sonuc.user);
+    } catch (e) {
+      print("anonim giris hata:" + e.toString());
+      return null;
+    }
+  }
+
+  @override
+  Future<MyUser> signInWithGoogle() async {
     GoogleSignIn _googleSignIn = GoogleSignIn();
     GoogleSignInAccount _googleUser = await _googleSignIn.signIn();
 
@@ -64,11 +63,11 @@ class FirebaseAuthService implements AuthBase {
       GoogleSignInAuthentication _googleAuth = await _googleUser.authentication;
       if (_googleAuth.idToken != null && _googleAuth.accessToken != null) {
         UserCredential sonuc = await _firebaseAuth.signInWithCredential(
-            GoogleAuthProvider.credential(
+            GoogleAuthProvider.getCredential(
                 idToken: _googleAuth.idToken,
                 accessToken: _googleAuth.accessToken));
-        User _kullanici = sonuc.user;
-        return _userFromFirebase(_kullanici);
+        User _user = sonuc.user;
+        return _userFromFirebase(_user);
       } else {
         return null;
       }
@@ -78,7 +77,7 @@ class FirebaseAuthService implements AuthBase {
   }
 
   @override
-  Future<Kullanici> signInWithFacebook() async {
+  Future<MyUser> signInWithFacebook() async {
     final _facebookLogin = FacebookLogin();
 
     FacebookLoginResult _faceResult =
@@ -86,14 +85,21 @@ class FirebaseAuthService implements AuthBase {
 
     switch (_faceResult.status) {
       case FacebookLoginStatus.loggedIn:
-        if (_faceResult.accessToken.token != null) {
-          UserCredential _firebaseResult = await _firebaseAuth
-              .signInWithCredential(FacebookAuthProvider.credential(
-                  _faceResult.accessToken.token));
+        if (_faceResult.accessToken != null &&
+            _faceResult.accessToken.isValid()) {
+          var _firebaseResult = await _firebaseAuth.signInWithCredential(
+              FacebookAuthProvider.credential(_faceResult.accessToken.token));
+          //
+          // FacebookAuthCredential _firebaseResult = await _firebaseAuth.signInWithCredential(
+          //     FacebookAuthProvider.credential(
+          //         accessToken: _faceResult.accessToken.token));
 
-          User _kullanici = _firebaseResult.user;
-          return _userFromFirebase(_kullanici);
-        } else {}
+          User _user = _firebaseResult.user;
+          return _userFromFirebase(_user);
+        } else {
+          /* print("access token valid :" +
+              _faceResult.accessToken.isValid().toString());*/
+        }
 
         break;
 
@@ -110,7 +116,7 @@ class FirebaseAuthService implements AuthBase {
   }
 
   @override
-  Future<Kullanici> createUserWithEmailAndPassword(
+  Future<MyUser> createUserWithEmailandPassword(
       String email, String sifre) async {
     UserCredential sonuc = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: sifre);
@@ -118,8 +124,7 @@ class FirebaseAuthService implements AuthBase {
   }
 
   @override
-  Future<Kullanici> signInWithEmailAndPassword(
-      String email, String sifre) async {
+  Future<MyUser> signInWithEmailandPassword(String email, String sifre) async {
     UserCredential sonuc = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: sifre);
     return _userFromFirebase(sonuc.user);

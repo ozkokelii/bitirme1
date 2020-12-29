@@ -41,6 +41,13 @@ dev_dependencies:
   cloud_firestore: ^0.14.4
   image_picker: ^0.6.7+17
   firebase_storage: ^5.2.0
+  intl: ^0.16.1
+  timeago: ^2.0.29
+  firebase_messaging: ^7.0.3
+  flutter_local_notifications: ^3.0.2
+  http: ^0.12.2
+  path_provider: ^1.6.24
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

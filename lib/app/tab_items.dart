@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-enum TabItem { Kullanicilar, Profil }
+enum TabItem { Kullanicilar, Konusmalarim, Profil }
 
 class TabItemData {
   final String title;
@@ -11,7 +11,8 @@ class TabItemData {
 
   static Map<TabItem, TabItemData> tumTablar = {
     TabItem.Kullanicilar:
-        TabItemData("Kullanıcılaar", Icons.supervised_user_circle),
+        TabItemData("Kullanıcılar", Icons.supervised_user_circle),
+    TabItem.Konusmalarim: TabItemData("Konusmalarım", Icons.chat),
     TabItem.Profil: TabItemData("Profil", Icons.person),
   };
 }

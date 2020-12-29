@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/locator.dart';
+import 'package:flutter_lovers/model/konusma.dart';
 import 'package:flutter_lovers/model/mesaj.dart';
 import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/repository/user_repository.dart';
@@ -10,11 +13,11 @@ enum ViewState { Idle, Busy }
 class UserModel with ChangeNotifier implements AuthBase {
   ViewState _state = ViewState.Idle;
   UserRepository _userRepository = locator<UserRepository>();
-  Kullanici _kullanici;
+  MyUser _user;
   String emailHataMesaji;
   String sifreHataMesaji;
 
-  Kullanici get kullanici => _kullanici;
+  MyUser get user => _user;
 
   ViewState get state => _state;
 
@@ -24,36 +27,20 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   UserModel() {
-    currentUser();
+    getCurrentUser();
   }
 
   @override
-  Future<Kullanici> currentUser() async {
+  Future<MyUser> getCurrentUser() async {
     try {
       state = ViewState.Busy;
-      _kullanici = await _userRepository.currentUser();
-      return _kullanici;
+      _user = await _userRepository.getCurrentUser();
+      if (_user != null)
+        return _user;
+      else
+        return null;
     } catch (e) {
-      debugPrint("viewmodeldeki current user hatası " + e.toString());
-      return null;
-    } finally {
-      state = ViewState.Idle;
-    }
-  }
-
-  Future<List<Kullanici>> getAllUser() async {
-    var tumKullaniciListesi = await _userRepository.getAllUser();
-    return tumKullaniciListesi;
-  }
-
-  @override
-  Future<Kullanici> signInAnonymously() async {
-    try {
-      state = ViewState.Busy;
-      _kullanici = await _userRepository.signInAnonymously();
-      return _kullanici;
-    } catch (e) {
-      debugPrint("viewmodeldeki current user hatası " + e.toString());
+      debugPrint("Viewmodeldeki current user hata:" + e.toString());
       return null;
     } finally {
       state = ViewState.Idle;
@@ -65,10 +52,10 @@ class UserModel with ChangeNotifier implements AuthBase {
     try {
       state = ViewState.Busy;
       bool sonuc = await _userRepository.signOut();
-      _kullanici = null;
+      _user = null;
       return sonuc;
     } catch (e) {
-      debugPrint("viewmodeldeki current user hatası " + e.toString());
+      debugPrint("Viewmodeldeki current user hata:" + e.toString());
       return false;
     } finally {
       state = ViewState.Idle;
@@ -76,13 +63,13 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<Kullanici> signInWithGoogle() async {
+  Future<MyUser> singInAnonymously() async {
     try {
       state = ViewState.Busy;
-      _kullanici = await _userRepository.signInWithGoogle();
-      return _kullanici;
+      _user = await _userRepository.singInAnonymously();
+      return _user;
     } catch (e) {
-      debugPrint("viewmodeldeki current user hatası " + e.toString());
+      debugPrint("Viewmodeldeki current user hata:" + e.toString());
       return null;
     } finally {
       state = ViewState.Idle;
@@ -90,13 +77,16 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<Kullanici> signInWithFacebook() async {
+  Future<MyUser> signInWithGoogle() async {
     try {
       state = ViewState.Busy;
-      _kullanici = await _userRepository.signInWithFacebook();
-      return _kullanici;
+      _user = await _userRepository.signInWithGoogle();
+      if (_user != null)
+        return _user;
+      else
+        return null;
     } catch (e) {
-      debugPrint("viewmodeldeki current user hatası " + e.toString());
+      debugPrint("Viewmodeldeki current user hata:" + e.toString());
       return null;
     } finally {
       state = ViewState.Idle;
@@ -104,14 +94,28 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<Kullanici> createUserWithEmailAndPassword(
-      String email, String sifre) async {
+  Future<MyUser> signInWithFacebook() async {
+    try {
+      state = ViewState.Busy;
+      _user = await _userRepository.signInWithFacebook();
+      if (_user != null)
+        return _user;
+      else {
+        return null;
+      }
+    } finally {
+      state = ViewState.Idle;
+    }
+  }
+
+  @override
+  Future<MyUser> createUserWithEmailandPassword(String email, String sifre) async {
     if (_emailSifreKontrol(email, sifre)) {
       try {
         state = ViewState.Busy;
-        _kullanici =
-            await _userRepository.createUserWithEmailAndPassword(email, sifre);
-        return _kullanici;
+        _user = await _userRepository.createUserWithEmailandPassword(email, sifre);
+
+        return _user;
       } finally {
         state = ViewState.Idle;
       }
@@ -120,14 +124,12 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<Kullanici> signInWithEmailAndPassword(
-      String email, String sifre) async {
+  Future<MyUser> signInWithEmailandPassword(String email, String sifre) async {
     try {
       if (_emailSifreKontrol(email, sifre)) {
         state = ViewState.Busy;
-        _kullanici =
-            await _userRepository.signInWithEmailAndPassword(email, sifre);
-        return _kullanici;
+        _user = await _userRepository.signInWithEmailandPassword(email, sifre);
+        return _user;
       } else
         return null;
     } finally {
@@ -137,12 +139,13 @@ class UserModel with ChangeNotifier implements AuthBase {
 
   bool _emailSifreKontrol(String email, String sifre) {
     var sonuc = true;
+
     if (sifre.length < 6) {
-      sifreHataMesaji = "En az 6 karakterli olmalı";
+      sifreHataMesaji = "En az 6 karakter olmalı";
       sonuc = false;
     } else
       sifreHataMesaji = null;
-    if (!email.contains("@")) {
+    if (!email.contains('@')) {
       emailHataMesaji = "Geçersiz email adresi";
       sonuc = false;
     } else
@@ -150,27 +153,24 @@ class UserModel with ChangeNotifier implements AuthBase {
     return sonuc;
   }
 
-  Future<bool> updateUserName(String kullaniciID, String yeniUserName) async {
-    var sonuc = await _userRepository.updateUserName(kullaniciID, yeniUserName);
+  Future<bool> updateUserName(String userID, String yeniUserName) async {
+    var sonuc = await _userRepository.updateUserName(userID, yeniUserName);
     if (sonuc) {
-      _kullanici.userName = yeniUserName;
+      _user.userName = yeniUserName;
     }
     return sonuc;
   }
 
-  Future<String> uploadFile(
-      String kullaniciID, String fileType, profilFoto) async {
-    var indirmeLinki =
-        await _userRepository.uploadFile(kullaniciID, fileType, profilFoto);
+  Future<String> uploadFile(String userID, String fileType, File profilFoto) async {
+    var indirmeLinki = await _userRepository.uploadFile(userID, fileType, profilFoto);
     return indirmeLinki;
   }
 
-  Stream<List<Mesaj>> getMessages(
-      String currentUserID, String sohbetEdilenUserID) {
+  Stream<List<Mesaj>> getMessages(String currentUserID, String sohbetEdilenUserID) {
     return _userRepository.getMessages(currentUserID, sohbetEdilenUserID);
   }
 
-  Future<bool> saveMessage(Mesaj kaydedilecekMesaj) {
-    return _userRepository.saveMessage(kaydedilecekMesaj);
+  Future<List<Konusma>> getAllConversations(String userID) async {
+    return await _userRepository.getAllConversations(userID);
   }
 }

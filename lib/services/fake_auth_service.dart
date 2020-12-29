@@ -1,21 +1,13 @@
 import 'package:flutter_lovers/model/user.dart';
 import 'package:flutter_lovers/services/auth_base.dart';
 
-class FakeAuthService implements AuthBase {
-  String kullaniciID = "71547154";
+class FakeAuthenticationService implements AuthBase {
+  String userID = "123123123123123213123123123";
 
   @override
-  Future<Kullanici> currentUser() async {
+  Future<MyUser> getCurrentUser() async {
     return await Future.value(
-        Kullanici(kullaniciID: kullaniciID, email: "fakekullanici@fake.com"));
-  }
-
-  @override
-  Future<Kullanici> signInAnonymously() async {
-    return await Future.delayed(
-        Duration(seconds: 2),
-        () => Kullanici(
-            kullaniciID: kullaniciID, email: "fakekullanici@fake.com"));
+        MyUser(userID: userID, email: "fakeuser@fake.com"));
   }
 
   @override
@@ -24,40 +16,41 @@ class FakeAuthService implements AuthBase {
   }
 
   @override
-  Future<Kullanici> signInWithGoogle() async {
-    return await Future.delayed(
-        Duration(seconds: 2),
-        () => Kullanici(
-            kullaniciID: "google_user_id_121212",
-            email: "fakekullanici@fake.com"));
+  Future<MyUser> singInAnonymously() async {
+    return await Future.delayed(Duration(seconds: 2),
+        () => MyUser(userID: userID, email: "fakeuser@fake.com"));
   }
 
   @override
-  Future<Kullanici> signInWithFacebook() async {
+  Future<MyUser> signInWithGoogle() async {
     return await Future.delayed(
         Duration(seconds: 2),
-        () => Kullanici(
-            kullaniciID: "facebook_user_id_12121212",
-            email: "fakekullanici@fake.com"));
+        () => MyUser(
+            userID: "google_user_id_123456", email: "fakeuser@fake.com"));
   }
 
   @override
-  Future<Kullanici> createUserWithEmailAndPassword(
+  Future<MyUser> signInWithFacebook() async {
+    return await Future.delayed(
+        Duration(seconds: 2),
+        () => MyUser(
+            userID: "facebook_user_id_123456", email: "fakeuser@fake.com"));
+  }
+
+  @override
+  Future<MyUser> createUserWithEmailandPassword(
       String email, String sifre) async {
     return await Future.delayed(
         Duration(seconds: 2),
-        () => Kullanici(
-            kullaniciID: "created_user_id_131331",
-            email: "fakekullanici@fake.com"));
+        () => MyUser(
+            userID: "created_user_id_123456", email: "fakeuser@fake.com"));
   }
 
   @override
-  Future<Kullanici> signInWithEmailAndPassword(
-      String email, String sifre) async {
+  Future<MyUser> signInWithEmailandPassword(String email, String sifre) async {
     return await Future.delayed(
         Duration(seconds: 2),
-        () => Kullanici(
-            kullaniciID: "signin_user_id_141414",
-            email: "fakekullanici@fake.com"));
+        () => MyUser(
+            userID: "signIn_user_id_123456", email: "fakeuser@fake.com"));
   }
 }
