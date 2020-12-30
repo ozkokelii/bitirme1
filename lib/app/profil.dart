@@ -16,19 +16,18 @@ class ProfilPage extends StatefulWidget {
 class _ProfilPageState extends State<ProfilPage> {
   TextEditingController _controllerUserName;
   File _profilFoto;
-/*
+
   @override
   void initState() {
     super.initState();
     _controllerUserName = TextEditingController();
-    AdmobIslemleri.myBannerAd = AdmobIslemleri.buildBannerAd();
+    /*AdmobIslemleri.myBannerAd = AdmobIslemleri.buildBannerAd();
     AdmobIslemleri.myBannerAd
       ..load()
       ..show(anchorOffset: 180);
     print(
-        " #################### banner kullanıcı sayfasında gosterilecek ######################");
+        " #################### banner kullanıcı sayfasında gosterilecek ######################");*/
   }
-*/
   @override
   void dispose() {
     _controllerUserName.dispose();

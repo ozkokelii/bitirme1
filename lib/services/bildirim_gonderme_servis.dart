@@ -6,7 +6,8 @@ class BildirimGondermeServis {
   Future<bool> bildirimGonder(
       Mesaj gonderilecekBildirim, MyUser gonderenUser, String token) async {
     String endURL = "https://fcm.googleapis.com/fcm/send";
-    String firebaseKey = "BURAYA KENDI FIREBASE SUNUCU ANAHTARINIZI YAZINIZ";
+    String firebaseKey =
+        "AAAAoiCnTuE:APA91bHevIv9QvpJNoSUMz5Hy-AE0JyF8Mj32Jrb35OoLA2DbdkSSY9JiNmvl8khtOyHZVcGFusTwkREbxNGXEfHDNp3roNEZjB0Yde7fNH_ohwFaEpDnZNQ8wKQAwwHj_IlUABNIJ4a";
     Map<String, String> headers = {
       "Content-type": "application/json",
       "Authorization": "key=$firebaseKey"
