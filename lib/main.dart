@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
           title: 'Flutter Lovers',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            primarySwatch: Colors.purple,
+            primarySwatch: Colors.indigo,
           ),
           home: LandingPage()),
     );

@@ -24,7 +24,7 @@ class _KullanicilarPageState extends State<KullanicilarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Kullanicilar"),
+        title: Text("Kullanıcılar"),
       ),
       body: Consumer<AllUserViewModel>(
         builder: (context, model, child) {

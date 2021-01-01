@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-//import 'package:flutter_lovers/admob_islemleri.dart';
 import 'package:flutter_lovers/common_widget/platform_duyarli_alert_dialog.dart';
 import 'package:flutter_lovers/common_widget/social_login_button.dart';
 import 'package:flutter_lovers/viewmodel/user_model.dart';
@@ -21,13 +20,15 @@ class _ProfilPageState extends State<ProfilPage> {
   void initState() {
     super.initState();
     _controllerUserName = TextEditingController();
-    /*AdmobIslemleri.myBannerAd = AdmobIslemleri.buildBannerAd();
+    /*
+    AdmobIslemleri.myBannerAd = AdmobIslemleri.buildBannerAd();
     AdmobIslemleri.myBannerAd
       ..load()
       ..show(anchorOffset: 180);
     print(
         " #################### banner kullanıcı sayfasında gosterilecek ######################");*/
   }
+
   @override
   void dispose() {
     _controllerUserName.dispose();

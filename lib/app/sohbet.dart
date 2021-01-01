@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_lovers/admob_islemleri.dart';
 import 'package:flutter_lovers/model/mesaj.dart';
 import 'package:flutter_lovers/viewmodel/chat_view_model.dart';
 import 'package:intl/intl.dart';

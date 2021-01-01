@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_lovers/admob_islemleri.dart';
 import 'package:flutter_lovers/app/tab_items.dart';
 
 class MyCustomBottomNavigation extends StatefulWidget {
@@ -46,7 +45,8 @@ class _MyCustomBottomNavigationState extends State<MyCustomBottomNavigation> {
 
     super.dispose();
   }
-*/
+   */
+
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
@@ -74,6 +74,7 @@ class _MyCustomBottomNavigationState extends State<MyCustomBottomNavigation> {
 
     return BottomNavigationBarItem(
       icon: Icon(olusturulacakTab.icon),
+      // ignore: deprecated_member_use
       title: Text(olusturulacakTab.title),
     );
   }

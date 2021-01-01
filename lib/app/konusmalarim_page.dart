@@ -1,6 +1,4 @@
-//import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_lovers/admob_islemleri.dart';
 import 'package:flutter_lovers/app/sohbet.dart';
 import 'package:flutter_lovers/model/konusma.dart';
 import 'package:flutter_lovers/model/user.dart';
@@ -54,7 +52,7 @@ class _KonusmalarimPageState extends State<KonusmalarimPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Konusmalarım"),
+        title: Text("Konuşmalarım"),
       ),
       body: FutureBuilder<List<Konusma>>(
         future: _userModel.getAllConversations(_userModel.user.userID),

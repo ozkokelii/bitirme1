@@ -1,7 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lovers/app/bottom_nav.dart';
-//import 'package:flutter_lovers/admob_islemleri.dart';
 import 'package:flutter_lovers/app/konusmalarim_page.dart';
 import 'package:flutter_lovers/app/kullanicilar.dart';
 import 'package:flutter_lovers/app/profil.dart';
